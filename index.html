@@ -199,6 +199,101 @@
 
   @keyframes fadeUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(7px); } }
+
+  /* ── MOBILE HAMBURGER ── */
+  .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; z-index: 200; }
+  .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--gold); transition: all 0.3s; }
+  .nav-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .nav-toggle.open span:nth-child(2) { opacity: 0; }
+  .nav-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  /* ── TABLET (max 1024px) ── */
+  @media (max-width: 1024px) {
+    nav { padding: 18px 40px; }
+    .about { padding: 80px 40px; }
+    .about-inner { gap: 50px; }
+    .services { padding: 80px 40px; }
+    .services-grid { grid-template-columns: repeat(3, 1fr); }
+    .process { padding: 80px 40px; }
+    .testimonial { padding: 72px 40px; }
+    .contact { padding: 80px 40px; }
+    footer { padding: 60px 40px 30px; }
+    .footer-top { gap: 36px; }
+  }
+
+  /* ── MOBILE (max 768px) ── */
+  @media (max-width: 768px) {
+    /* NAV */
+    nav { padding: 16px 24px; }
+    .nav-toggle { display: flex; }
+    nav ul {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(20,20,20,0.98);
+      flex-direction: column; justify-content: center; align-items: center;
+      gap: 36px; z-index: 150;
+    }
+    nav ul.open { display: flex; }
+    nav ul a { font-size: 13px; letter-spacing: 4px; }
+    .nav-cta { padding: 14px 40px !important; font-size: 12px !important; }
+
+    /* HERO */
+    .hero { min-height: 100svh; padding: 100px 24px 60px; }
+    .hero-content { padding: 0; }
+    .hero-badge { font-size: 9px; letter-spacing: 4px; padding: 7px 20px; margin-bottom: 28px; }
+    .hero-title { font-size: clamp(40px, 11vw, 64px); margin-bottom: 14px; }
+    .hero-sub { font-size: 16px; margin-bottom: 20px; }
+    .hero-desc { font-size: 13px; margin-bottom: 36px; }
+    .hero-cta { flex-direction: column; align-items: center; gap: 14px; }
+    .btn-primary, .btn-secondary { width: 100%; max-width: 280px; text-align: center; padding: 15px 32px; }
+    .hero-scroll { display: none; }
+
+    /* ABOUT */
+    .about { padding: 70px 24px; }
+    .about-inner { grid-template-columns: 1fr; gap: 40px; }
+    .about h2 { font-size: 34px; }
+    .about-stats { grid-template-columns: 1fr 1fr; gap: 14px; }
+    .stat-num { font-size: 38px; }
+    .section-title { font-size: 34px; }
+    .section-head { margin-bottom: 44px; }
+
+    /* SERVICES */
+    .services { padding: 70px 24px; }
+    .services-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .service-card { padding: 28px 16px 24px; }
+    .svc-name { font-size: 14px; }
+    .svc-desc { font-size: 11px; }
+
+    /* PROCESS */
+    .process { padding: 70px 24px; }
+    .process-steps { grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 44px; }
+    .process-steps::before { display: none; }
+    .step-title { font-size: 17px; }
+
+    /* TESTIMONIAL */
+    .testimonial { padding: 60px 24px; }
+    .test-text { font-size: 18px; }
+
+    /* CONTACT */
+    .contact { padding: 70px 24px; }
+    .form-row { grid-template-columns: 1fr; gap: 16px; }
+    .submit-btn { width: 100%; padding: 16px 24px; }
+
+    /* FOOTER */
+    footer { padding: 50px 24px 28px; }
+    .footer-top { grid-template-columns: 1fr; gap: 36px; }
+    .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+  }
+
+  /* ── SMALL MOBILE (max 480px) ── */
+  @media (max-width: 480px) {
+    .hero-title { font-size: clamp(34px, 10vw, 52px); }
+    .services-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr; }
+    .about-stats { grid-template-columns: 1fr 1fr; }
+    .section-title { font-size: 28px; }
+    .about h2 { font-size: 28px; }
+  }
 </style>
 </head>
 <body>
@@ -206,10 +301,13 @@
 <!-- NAV -->
 <nav>
   <div class="logo">Velour <span>Events</span></div>
-  <ul>
-    <li><a href="#about">About</a></li>
-    <li><a href="#services">Services</a></li>
-    <li><a href="#contact" class="nav-cta">Book Now</a></li>
+  <div class="nav-toggle" id="navToggle" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </div>
+  <ul id="navMenu">
+    <li><a href="#about" onclick="closeNav()">About</a></li>
+    <li><a href="#services" onclick="closeNav()">Services</a></li>
+    <li><a href="#contact" class="nav-cta" onclick="closeNav()">Book Now</a></li>
   </ul>
 </nav>
 
@@ -445,6 +543,16 @@
         console.error("EmailJS error:", error);
       });
   });
+
+  // Mobile nav toggle
+  function toggleNav() {
+    document.getElementById('navMenu').classList.toggle('open');
+    document.getElementById('navToggle').classList.toggle('open');
+  }
+  function closeNav() {
+    document.getElementById('navMenu').classList.remove('open');
+    document.getElementById('navToggle').classList.remove('open');
+  }
 </script>
 </body>
 </html>
